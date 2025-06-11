@@ -1,9 +1,10 @@
 "use client";
 
+import FadeSlideUp from "@/app/components/animations/FadeSlideUp";
 import CommetLikes from "@/app/components/CommetLikes";
 import { Loader } from "@/app/components/Loader/Loader";
 import { GetPostByCategory } from "@/app/graphql/Queris/Post";
-import { UseSendToken } from "@/app/graphql/Queris/SenTokn";
+import { UseSenTokn } from "@/app/graphql/Queris/SenTokn";
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -14,7 +15,7 @@ const Categories = () => {
   const catName = useSearchParams().get("name");
   const { data, loading } = GetPostByCategory(catId);
   const categoriesData = data?.getPostByCategory;
-  const { data: user, loading: LoadingUser } = UseSendToken();
+  const { data: user, loading: LoadingUser } = UseSenTokn();
   return (
     <Suspense>
       <>
@@ -28,15 +29,16 @@ const Categories = () => {
             className=" 
     grid gap-12 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 lg:gap-6 "
           >
-            {categoriesData?.map((article) => {
-              const ownerPost = article?.Users?.id === user?.sendToken?.id;
+            {categoriesData?.map((article, index) => {
+              const ownerPost = article?.User?.id === user?.SenTokn?.id;
 
               return (
-                <>
+                <article key={article?.id}>
                   <div className="relative flex flex-col justify-between h-full">
-                    <article
-                      key={article?.id}
-                      className="mb-6  rounded-lg border border-gray-100 bg-white shadow-sm "
+                    <FadeSlideUp
+                      delay={index * 0.05}
+                      className="mb-6 rounded-lg border border-gray-100 bg-white
+                      shadow-sm "
                     >
                       {ownerPost && (
                         <div className="absolute -top-8 -left-5">
@@ -60,7 +62,6 @@ const Categories = () => {
                           />
                         )}
                       </div>
-
                       <div className="p-4 sm:p-6 flex flex-col justify-between">
                         <Link href="#">
                           <h3 className="text-md font-medium text-gray-900">
@@ -88,11 +89,10 @@ const Categories = () => {
                           </span>
                         </Link>
                       </div>
-
                       <CommetLikes article={article} user={user} />
-                    </article>
+                    </FadeSlideUp>
                   </div>
-                </>
+                </article>
               );
             })}
           </div>

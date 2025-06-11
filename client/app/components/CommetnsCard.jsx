@@ -14,22 +14,22 @@ const CommetnsCard = ({
       id,
       title,
       postsId: article?.id,
-      usersId: user?.sendToken?.id,
+      usersId: user?.SenTokn?.id,
     });
     setMode(true);
   };
 
   return (
-    <div className="w-full max-h-60 overflow-y-scroll scroll-arrow">
+    <div className="w-full max-h-60 overflow-y-scroll scroll-arrow bg-white dark:bg-articleGray-800 rounded-lg border border-articleGray-200 dark:border-articleGray-700 shadow-md p-2">
       {article?.comments.map((comment) => {
-        const ownerComment = comment?.usersId === user?.sendToken?.id;
+        const ownerComment = comment?.usersId === user?.SenTokn?.id;
 
         return (
           <div
-            className="flex justify-between items-center px-4 overflow-hidden"
+            className="flex justify-between items-center px-4 overflow-hidden mb-4 py-3 bg-articleGray-100 dark:bg-articleGray-700 rounded-md"
             key={comment?.id}
           >
-            <div className="flex gap-2 items-center mb-6">
+            <div className="flex gap-2 items-center mb-2">
               <Image
                 src={comment?.user?.img}
                 alt=""
@@ -38,10 +38,10 @@ const CommetnsCard = ({
                 className="w-14 h-14 rounded-full "
               />
               <div className="">
-                <h3 className="text-lg font-bold capitalize">
+                <h3 className="text-lg font-bold capitalize text-articleGray-800 dark:text-white">
                   {comment?.user?.name}
                 </h3>
-                <p className="">{comment?.title}</p>
+                <p className="text-gray-600 dark:text-gray-300">{comment?.title}</p>
               </div>
             </div>
             {ownerComment && (

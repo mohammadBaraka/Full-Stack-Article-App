@@ -4,10 +4,10 @@ import { prisma } from "../../utils/connect.js";
 export const categoryResolvers = {
   Query: {
     getAllCategories: async () => {
-      const categoies = await prisma.category.findMany();
-      if (!categoies.length)
+      const categories = await prisma.category.findMany();
+      if (!categories.length)
         throw new GraphQLError("There is No Categories to show");
-      return categoies;
+      return categories;
     },
   },
   Mutation: {

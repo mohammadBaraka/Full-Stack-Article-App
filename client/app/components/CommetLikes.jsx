@@ -18,7 +18,7 @@ import {
   DeleteComeent,
   UpdateCommentMutation,
 } from "../graphql/Mutations/CommentMutation";
-import { msgError, msgSucess } from "../utils/msg";
+import { msgError, msgSuccess } from "../utils/msg";
 import CommetnsCard from "./CommetnsCard";
 import Swal from "sweetalert2";
 import { ToggleLike } from "../graphql/Mutations/LikeMutation";
@@ -31,7 +31,7 @@ const CommetLikes = ({ article, user }) => {
     id: "",
     title: "",
     postsId: article?.id,
-    usersId: user?.sendToken?.id,
+    usersId: user?.SenTokn?.id,
   });
 
   const { updateComment, loading } = UpdateCommentMutation();
@@ -48,7 +48,7 @@ const CommetLikes = ({ article, user }) => {
       id: "",
       title: "",
       postsId: article?.id,
-      usersId: user?.sendToken?.id,
+      usersId: user?.SenTokn?.id,
     });
     setMode(false);
   };
@@ -58,7 +58,7 @@ const CommetLikes = ({ article, user }) => {
           variables: inputs,
         })
           .then(() => {
-            msgSucess("Comment updated successfully");
+            msgSuccess("Comment updated successfully");
             handleResetTitle();
           })
           .catch((err) => {
@@ -70,7 +70,7 @@ const CommetLikes = ({ article, user }) => {
           variables: inputs,
         })
           .then(() => {
-            msgSucess("Comment created successfully");
+            msgSuccess("Comment created successfully");
             handleResetTitle();
           })
           .catch((err) => {
@@ -95,7 +95,7 @@ const CommetLikes = ({ article, user }) => {
               id,
             },
           });
-          msgSucess("Comment deleted successfully");
+          msgSuccess("Comment deleted successfully");
         }
       });
     } catch (error) {
@@ -111,7 +111,7 @@ const CommetLikes = ({ article, user }) => {
       },
     })
       .then((res) => {
-        msgSucess(res?.data.toggleLike);
+        msgSuccess(res?.data.toggleLike);
       })
       .catch((err) => {
         console.log("🚀 ~ handleToggleLike ~ err:", err);
@@ -119,9 +119,9 @@ const CommetLikes = ({ article, user }) => {
       });
   };
   const userLiked = article?.likes?.find(
-    (like) => like?.usersId === user?.sendToken?.id
+    (like) => like?.usersId === user?.SenTokn?.id
   );
-  const userIsLiked = userLiked?.usersId === user?.sendToken?.id;
+  const userIsLiked = userLiked?.usersId === user?.SenTokn?.id;
 
   return (
     <Accordion open={open === 0}>
@@ -155,10 +155,7 @@ const CommetLikes = ({ article, user }) => {
               className="text-sm font-bold flex justify-center items-center gap-1"
             >
               Likes ({article?.likes?.length})
-              <HandThumbUpIcon
-                className="h-6 w-6 text-blue-500"
-                cursor-pointer
-              />
+              <HandThumbUpIcon className="h-6 w-6 text-blue-500 cursor-pointer" />
             </div>
           )}
         </div>

@@ -26,7 +26,7 @@ export const userTpedDefs = /* GraphQL */ `
   type Query {
     getAllUsers: [User]
     getUser(id: String): User
-    sendToken: User
+    SenTokn: User
   }
   type Mutation {
     register(name: String, email: String, password: String, img: Upload): User

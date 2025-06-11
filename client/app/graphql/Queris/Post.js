@@ -7,7 +7,7 @@ export const GET_ALL_POSTS = gql`
       title
       desc
       img
-      Users {
+      User {
         id
         name
         img
@@ -27,7 +27,7 @@ export const GET_ALL_POSTS = gql`
         id
         usersId
       }
-      Users {
+      User {
         id
         name
       }
@@ -36,7 +36,7 @@ export const GET_ALL_POSTS = gql`
   }
 `;
 
-const GET_POST_BY_CATEGOYR = gql`
+const GET_POST_BY_Category = gql`
   query getPostByCategory($id: String) {
     getPostByCategory(id: $id) {
       id
@@ -53,7 +53,28 @@ const GET_POST_BY_CATEGOYR = gql`
     }
   }
 `;
-
+const GET_POSTS_BY_USERS_ID = gql`
+  query getPostByUserId($id: String) {
+    getPostByUserId(id: $id) {
+      User {
+        id
+        name
+        img
+        posts {
+          title
+          img
+          desc
+          comments {
+            title
+          }
+          likes {
+            id
+          }
+        }
+      }
+    }
+  }
+`;
 const GET_POST_BY_TITLE = gql`
   query getPostByTitle($title: String) {
     getPostByTitle(title: $title) {
@@ -81,7 +102,7 @@ const GET_Post = gql`
         id
       }
       usersId
-      Users {
+      User {
         id
         name
         img
@@ -111,7 +132,14 @@ export const GetPostByTitle = (title) => {
 };
 
 export const GetPostByCategory = (id) => {
-  const { data, error, loading } = useQuery(GET_POST_BY_CATEGOYR, {
+  const { data, error, loading } = useQuery(GET_POST_BY_Category, {
+    variables: { id },
+  });
+  return { data, error, loading };
+};
+
+export const GetPostsByUsersId = (id) => {
+  const { data, error, loading } = useQuery(GET_POSTS_BY_USERS_ID, {
     variables: { id },
   });
   return { data, error, loading };

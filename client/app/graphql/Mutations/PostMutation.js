@@ -19,7 +19,7 @@ const CREATE_POST = gql`
       id
       title
       img
-      Users {
+      User {
         id
         name
       }
@@ -47,7 +47,7 @@ const UPDATE_POST = gql`
       id
       title
       img
-      Users {
+      User {
         id
         name
       }
@@ -67,7 +67,7 @@ export const CreatePostMutation = (inputs) => {
       console.log(data);
     },
     variables: inputs,
-    refetchQueries: [{ query: GET_ALL_POSTS }],
+    refetchQueries: [{ GET_ALL_POSTS }],
   });
   return { createPost, data, loading, error };
 };

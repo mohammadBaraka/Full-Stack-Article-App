@@ -6,11 +6,11 @@ export const postReaolvers = {
   Query: {
     getAllPosts: async () => {
       try {
-        const Users = true;
+        const User = true;
         const posts = await prisma.posts.findMany({
           orderBy: { createdAt: "desc" },
           include: {
-            Users,
+            User,
             likes: true,
             comments: {
               include: { user: true },
@@ -33,25 +33,50 @@ export const postReaolvers = {
     getPostByTitle: async (_, { title }) => {
       try {
         if (!title) throw new GraphQLError("Title is required");
-        const postNmae = await prisma.posts.findMany({
+        const postName = await prisma.posts.findMany({
           where: {
             title: {
               contains: title,
             },
           },
         });
-        if (!postNmae.length) throw new GraphQLError("Post Not Found");
-        return postNmae;
+        if (!postName.length) throw new GraphQLError("Post Not Found");
+        return postName;
       } catch (error) {
         throw new GraphQLError(error?.message);
       }
     },
+
+    getPostByUserId: async (_, { id }) => {
+      try {
+        const usersPost = await prisma.posts.findMany({
+          where: { usersId: id },
+          include: {
+            User: {
+              include: {
+                posts: {
+                  include: {
+                    comments: true,
+                    likes: true,
+                  },
+                },
+              },
+            },
+          },
+        });
+        if (!usersPost.length) throw new GraphQLError("Post Not Found");
+        return usersPost;
+      } catch (error) {
+        throw new GraphQLError(error?.message);
+      }
+    },
+
     getOnePost: async (_, { id }) => {
       try {
         const post = await prisma.posts.findUnique({
           where: { id },
           include: {
-            Users: true,
+            User: true,
             comments: true,
             categories: {
               include: {
@@ -91,7 +116,7 @@ export const postReaolvers = {
           },
 
           include: {
-            Users: true,
+            User: true,
             comments: true,
             likes: true,
           },
@@ -123,7 +148,7 @@ export const postReaolvers = {
               create: categoryId.map((id) => ({ categoryId: id })), // Simplified to connect a single category
             },
           },
-          include: { Users: true, comments: true, likes: true },
+          include: { User: true, comments: true, likes: true },
         });
 
         return post;
@@ -149,7 +174,7 @@ export const postReaolvers = {
               create: categoryId.map((id) => ({ categoryId: id })),
             },
           },
-          include: { Users: true },
+          include: { User: true },
         });
 
         return post;
@@ -159,12 +184,12 @@ export const postReaolvers = {
     },
     deletePost: async (_, { id }, context) => {
       try {
-        const userId = checkAuth(context);
+        const usersId = checkAuth(context);
         const post = await prisma.posts.findMany({
           where: { id },
         });
         if (!post.length) throw new GraphQLError("Post Not Found");
-        const allowed = userId?.id === post[0].usersId;
+        const allowed = usersId?.id === post[0].usersId;
         if (!allowed) throw new Error("Not Allowed To Delte Post");
         await prisma.posts.delete({
           where: { id },

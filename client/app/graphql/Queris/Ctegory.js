@@ -1,5 +1,4 @@
 import { gql, useQuery } from "@apollo/client";
-// dfdsf
 export const GET_ALL_CATEGORIES = gql`
   query {
     getAllCategories {

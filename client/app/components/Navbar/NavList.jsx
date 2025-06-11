@@ -1,14 +1,14 @@
 "use client";
 import { isLoggedInVar } from "@/app/graphql/Mutations/AuthMutation";
-import { UseSendToken } from "@/app/graphql/Queris/SenTokn";
 import { useReactiveVar } from "@apollo/client";
 import { List, ListItem } from "@material-tailwind/react";
 import Link from "next/link";
 import Search from "./Search";
+import { UseSenTokn } from "@/app/graphql/Queris/SenTokn";
 import { GetAllCategories } from "@/app/graphql/Queris/Ctegory";
 
 export function NavList() {
-  const { data } = UseSendToken();
+  const { data } = UseSenTokn();
   const isLoggedIn = useReactiveVar(isLoggedInVar);
   const { data: categories } = GetAllCategories();
   const categoriesData = categories?.getAllCategories;
@@ -37,7 +37,10 @@ export function NavList() {
 
         {isLoggedIn || data ? (
           <Link href="/pages/write">
-            <ListItem className="flex items-center  w-12 h-12 justify-center rounded-full bg-gray-200 font-bold text-black text-sm ">
+            <ListItem
+              className="flex items-center  w-12 h-12 justify-center rounded-full bg-articleBlue-300 font-bold
+            hover:bg-articleBlue-400 hover:text-white text-white text-sm"
+            >
               Write
             </ListItem>
           </Link>

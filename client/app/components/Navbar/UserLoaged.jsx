@@ -16,19 +16,19 @@ import {
   UserCircleIcon,
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
-import { msg, msgError, msgSucess } from "@/app/utils/msg";
+import { msg, msgError, msgSuccess } from "@/app/utils/msg";
 import {
   isLoggedInVar,
   LogoutMutation,
 } from "@/app/graphql/Mutations/AuthMutation";
 import { Loader } from "../Loader/Loader";
-import { UseSendToken } from "@/app/graphql/Queris/SenTokn";
 import { useRouter } from "next/navigation";
+import { UseSenTokn } from "@/app/graphql/Queris/SenTokn";
 
 const UserLoaged = () => {
   const router = useRouter();
-  const { data, loading: tokenLoadeing } = UseSendToken();
-  const user = data?.sendToken;
+  const { data, loading: tokenLoadeing } = UseSenTokn();
+  const user = data?.SenTokn;
 
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const closeMenu = () => setIsMenuOpen(false);
@@ -56,7 +56,7 @@ const UserLoaged = () => {
     e.preventDefault();
     try {
       await logout();
-      msgSucess("Logout success");
+      msgSuccess("Logout success");
       isLoggedInVar(false);
       router.refresh();
     } catch (err) {
@@ -65,7 +65,7 @@ const UserLoaged = () => {
   };
   return (
     <>
-      {loading ? <Loader /> : null}
+      {loading && <Loader />}
       <Menu open={isMenuOpen} handler={setIsMenuOpen} placement="bottom-end">
         <MenuHandler>
           <Button

@@ -27,7 +27,7 @@ export const msg = (icon, msg) => {
 //   });
 // };
 
-export const msgSucess = (msg) => {
+export const msgSuccess = (msg) => {
   toast.success(msg);
 };
 export const msgError = (msg) => {

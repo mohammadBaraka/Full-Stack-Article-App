@@ -7,7 +7,7 @@ export const postTypeDefs = /* GraphQL */ `
     img: String!
     categories: [Category]
     usersId: String
-    Users: User!
+    User: User!
     likes: [Likes]
     comments: [Comments]
     createdAt: String
@@ -24,6 +24,7 @@ export const postTypeDefs = /* GraphQL */ `
     getOnePost(id: String): Post
     getPostByTitle(title: String): [Post]
     getPostByCategory(id: String): [Post]
+    getPostByUserId(id: String): [Post]
   }
 
   type Mutation {

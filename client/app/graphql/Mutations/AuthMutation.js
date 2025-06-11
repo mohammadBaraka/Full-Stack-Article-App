@@ -1,6 +1,6 @@
 import { gql, makeVar, useMutation } from "@apollo/client";
-import { GET_ALL_USERS } from "../Queris/UsersQuery";
 import { SEND_TOKEN } from "../Queris/SenTokn";
+import { GET_ALL_USERS, GetAllUsers } from "../Queris/UsersQuery";
 
 export let isLoggedInVar = makeVar(false);
 
@@ -56,7 +56,7 @@ export const RegisterMutatin = () => {
 
 export const LoginMutation = (inputs) => {
   const [login, { data, error, loading }] = useMutation(LOGIN_MUTATION, {
-    refetchQueries: [{ query: SEND_TOKEN }],
+    refetchQueries: [{ query: GET_ALL_USERS }],
     onCompleted: () => {
       isLoggedInVar(true);
     },
@@ -75,7 +75,7 @@ export const LoginMutation = (inputs) => {
 
 export const LogoutMutation = () => {
   const [logout, { data, error, loading }] = useMutation(LOGOUT_MUTATION, {
-    refetchQueries: [{ query: SEND_TOKEN }],
+    refetchQueries: [{ query: GET_ALL_USERS }],
 
     update(cache, data) {
       console.log("🚀 ~ update ~ Logout:", data);

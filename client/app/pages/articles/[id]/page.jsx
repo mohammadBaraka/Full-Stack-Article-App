@@ -2,7 +2,7 @@
 import { Loader } from "@/app/components/Loader/Loader";
 import { DeltePostMutation } from "@/app/graphql/Mutations/PostMutation";
 import { GetPost, GetPostByCategory } from "@/app/graphql/Queris/Post";
-import { UseSendToken } from "@/app/graphql/Queris/SenTokn";
+import { UseSenTokn } from "@/app/graphql/Queris/SenTokn";
 import { msg } from "@/app/utils/msg";
 import Image from "next/image";
 import Link from "next/link";
@@ -20,9 +20,9 @@ const SinglePost = () => {
     data?.getOnePost?.categories[0]?.id
   );
   const post = data?.getOnePost;
-  console.log("🚀 ~ SinglePost ~ post:", post?.Users.id);
-  const { data: user } = UseSendToken();
-  const ownerPost = post?.usersId === user?.sendToken?.id;
+  console.log("🚀 ~ SinglePost ~ post:", post?.User.id);
+  const { data: user } = UseSenTokn();
+  const ownerPost = post?.usersId === user?.SenTokn?.id;
   // categories
   const handleDelte = async () => {
     try {
@@ -56,39 +56,39 @@ const SinglePost = () => {
     return <Loader />;
   }
   return (
-    <div className="flex w-[90%] mx-auto mt-marginGlobal justify-between">
-      <div className="w-1/2 flex flex-col gap-6">
+    <div className="flex flex-col lg:flex-row w-[95%] md:w-[90%] mx-auto mt-marginGlobal justify-between gap-8">
+      <div className="w-full lg:w-2/3 flex flex-col gap-6">
         <Image
           src={post?.img}
           alt="user"
           width={100}
           height={100}
-          className="w-full h-1/2 rounded-md"
+          className="w-full h-auto max-h-[500px] object-cover rounded-md"
         />
 
-        <div className="flex items-center gap-4">
-          <Link href={`/pages/profile?id=${post?.Users.id}`}>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+          <Link href={`/pages/profile?id=${post?.User.id}`}>
             <Image
-              src={post?.Users?.img}
+              src={post?.User?.img}
               alt="user"
               width={100}
               height={100}
-              className="rounded-full w-24 h-24"
+              className="rounded-full w-16 h-16 sm:w-24 sm:h-24"
             />
           </Link>
-          <div className="">
-            <h4 className="text-xl font-bold text-gray-700">
-              {post?.Users?.name}
+          <div className="mt-2 sm:mt-0">
+            <h4 className="text-lg sm:text-xl font-bold text-gray-700">
+              {post?.User?.name}
             </h4>
             {ownerPost && (
-              <div className="flex items-center gap-8">
+              <div className="flex items-center gap-1 mt-2">
                 <Image
                   onClick={handleDelte}
                   alt="delete"
                   src="/delete.png"
                   width={50}
                   height={50}
-                  className="w-6 h-6 cursor-pointer"
+                  className="w-5 h-5 sm:w-6 sm:h-6 cursor-pointer"
                 />
                 <Link href={`/pages/write/?post=${post?.id}`}>
                   <Image
@@ -96,7 +96,7 @@ const SinglePost = () => {
                     src="/edit.png"
                     width={50}
                     height={50}
-                    className="w-8 h-8 cursor-pointer"
+                    className="w-6 h-6 sm:w-8 sm:h-8 cursor-pointer"
                     state={post}
                   />
                 </Link>
@@ -104,14 +104,18 @@ const SinglePost = () => {
             )}
           </div>
         </div>
-        <h3 className="text-xl font-bold text-gray-500">{post?.title}</h3>
+        <h3 className="text-lg sm:text-xl font-bold text-gray-500">
+          {post?.title}
+        </h3>
         <div
-          className="font-bold text-xl"
+          className="font-bold text-base sm:text-xl prose max-w-none"
           dangerouslySetInnerHTML={{ __html: post?.desc }}
         />
       </div>
-      {/* Other Posts */}
-      <OtherPost categories={categories} />
+      {/* Other Posts - Now visible on mobile */}
+      <div className="w-full lg:w-1/3 mt-8 lg:mt-0">
+        <OtherPost categories={categories} />
+      </div>
     </div>
   );
 };

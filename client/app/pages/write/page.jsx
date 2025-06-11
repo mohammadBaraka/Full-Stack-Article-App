@@ -1,53 +1,73 @@
 "use client";
 import React, { useEffect, useState, Suspense } from "react";
 import dynamic from "next/dynamic";
-import "react-quill/dist/quill.snow.css"; // Import Quill styles
+import "react-quill-new/dist/quill.snow.css";
 import { Input } from "@material-tailwind/react";
 import {
   CreatePostMutation,
   UpdatePostMutation,
 } from "@/app/graphql/Mutations/PostMutation";
-import { UseSendToken } from "@/app/graphql/Queris/SenTokn";
-import { msg, msgError, msgSucess } from "@/app/utils/msg";
-import { GetAllCategories } from "@/app/graphql/Queris/Ctegory";
+import { UseSenTokn } from "@/app/graphql/Queris/SenTokn";
+import { msg, msgError, msgSuccess } from "@/app/utils/msg";
 import { GetPost } from "@/app/graphql/Queris/Post";
-import Bublish from "@/app/components/WriteComponents/Bublish";
-import Categoris from "@/app/components/WriteComponents/Categoris";
+import Categories from "@/app/components/WriteComponents/Categoris";
 import { Loader } from "@/app/components/Loader/Loader";
 import { useParams, useSearchParams } from "next/navigation";
-
-const QuillEditor = dynamic(() => import("react-quill"), { ssr: false });
+import { GetAllCategories } from "@/app/graphql/Queris/Ctegory";
+import Publish from "@/app/components/WriteComponents/Bublish";
+const QuillEditor = dynamic(() => import("react-quill-new"), { ssr: false });
 
 export default function Home() {
   const param = useParams();
-  console.log("🚀 ~ Home ~ param:", param.post);
   const postId = useSearchParams().get("post");
+  const [isClient, setIsClient] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const { data: postData, loading: loadingPost } = GetPost(postId);
-  const { data: token } = UseSendToken();
+  const { data: token } = UseSenTokn();
   const {
     updatePost,
     data: dataUpdate,
     loading: loadingUpdate,
   } = UpdatePostMutation();
-  const userId = token?.sendToken?.id;
-  const categorieIds = postData?.getOnePost?.categories?.map((cat) => cat?.id);
 
+  const usersId = token?.SenTokn?.id;
+  const categoriesIds = postData?.getOnePost?.categories?.map((cat) => cat?.id);
+
+  // Initialize state with empty values to prevent hydration mismatch
   const [inputs, setInputs] = useState({
-    title: postData?.getOnePost?.title || "",
-    desc: postData?.getOnePost?.desc || "",
-    userId: userId,
-    img: postData?.getOnePost?.img || null,
-    categoryId: categorieIds || [],
+    title: "",
+    desc: "",
+    usersId: undefined,
+    img: null,
+    categoryId: [],
   });
 
   const [imagePreview, setImagePreview] = useState(null);
 
+  // Set client-side flag
   useEffect(() => {
-    if (postId && postData?.getOnePost?.img) {
-      setImagePreview(postData?.getOnePost?.img);
+    setIsClient(true);
+  }, []);
+
+  // Update inputs when data is loaded (client-side only)
+  useEffect(() => {
+    if (isClient && postData?.getOnePost) {
+      setInputs({
+        title: postData.getOnePost.title || "",
+        desc: postData.getOnePost.desc || "",
+        usersId: usersId,
+        img: postData.getOnePost.img || null,
+        categoryId: categoriesIds || [],
+      });
     }
-  }, [postId, postData]);
+  }, [isClient, postData, usersId, categoriesIds]);
+
+  useEffect(() => {
+    if (isClient && postId && postData?.getOnePost?.img) {
+      setImagePreview(postData.getOnePost.img);
+    }
+  }, [isClient, postId, postData]);
 
   const {
     createPost,
@@ -65,12 +85,12 @@ export default function Home() {
             title: inputs.title,
             desc: inputs.desc,
             img: inputs.img,
-            userId: userId,
+            usersId,
             categoryId: inputs.categoryId,
           },
         })
           .then((res) => {
-            msgSucess("Post Updated Successfully");
+            msgSuccess("Post Updated Successfully");
             setInputs({
               title: "",
               desc: "",
@@ -83,7 +103,7 @@ export default function Home() {
           })
       : createPost()
           .then(() => {
-            msgSucess("Post Created Successfully");
+            msgSuccess("Post Created Successfully");
             setInputs({
               title: "",
               desc: "",
@@ -131,38 +151,44 @@ export default function Home() {
 
   const { data: categories, loading } = GetAllCategories();
 
+  if (!isClient || loading || loadingPost) {
+    return <Loader />;
+  }
+
   return (
     <Suspense fallback={<Loader />}>
-      {loading || loadingPost ? <Loader /> : null}
       <Input
         type="hidden"
         color="teal"
-        value={inputs.userId}
+        value={inputs.usersId || ""}
         name="usersId"
         onChange={handleChange}
       />
-      <main
-        className="flex flex-col lg:flex-row  w-[100%] items-center lg:items-stretch
-      lg:w-[70%] mx-auto gap-8 lg:mt-marginGlobal"
-      >
-        <div className="flex flex-col gap-4 lg:h-[59vh] w-2/3">
+      <main className="flex flex-col w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8 gap-4 sm:gap-6 lg:gap-8 lg:flex-row lg:mt-marginGlobal">
+        {/* Main Content Area */}
+        <div className="flex flex-col gap-4 w-full lg:w-2/3">
           <Input
             color="teal"
             label="Title"
             value={inputs.title}
             name="title"
             onChange={handleChange}
+            className="w-full"
           />
-          <QuillEditor
-            className="h-full"
-            value={inputs.desc}
-            onChange={handleDescChange}
-          />
+          <div className="h-64 sm:h-80 md:h-96 lg:h-[59vh]">
+            <QuillEditor
+              className="h-full"
+              value={inputs.desc}
+              onChange={handleDescChange}
+            />
+          </div>
         </div>
 
-        <div className="lg:w-[40%] w-2/3 h-[65vh] flex flex-row justify-between lg:flex-col gap-4">
-          <div className="w-1/2 lg:w-full">
-            <Bublish
+        {/* Sidebar */}
+        <div className="flex flex-col gap-4 w-full lg:w-1/3 lg:max-w-md">
+          {/* Publish Section */}
+          <div className="w-full">
+            <Publish
               loadingUpdate={loadingUpdate}
               handleChange={handleChange}
               handleSubmit={handleSubmit}
@@ -171,8 +197,10 @@ export default function Home() {
               imagePreview={imagePreview}
             />
           </div>
-          <div className="border border-spacing-2 border-gray-200 h-full w-1/2 lg:w-full">
-            <Categoris
+
+          {/* Categories Section */}
+          <div className="w-full border border-gray-200 rounded-lg p-4 min-h-[200px] sm:min-h-[250px] lg:min-h-[300px]">
+            <Categories
               categories={categories}
               handleChange={handleChange}
               inputs={inputs}

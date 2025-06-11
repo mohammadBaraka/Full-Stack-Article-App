@@ -1,5 +1,4 @@
 import { gql, useMutation } from "@apollo/client";
-import { GET_ALL_COMMENTS } from "../Queris/Comments";
 import { GET_ALL_POSTS } from "../Queris/Post";
 
 const CREATE_COMMENT = gql`

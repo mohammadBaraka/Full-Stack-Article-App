@@ -1,56 +1,148 @@
+"use client";
 import Image from "next/image";
 import { articlesData } from "./articlesData";
 import Link from "next/link";
+import FadeSlideUp from "../animations/FadeSlideUp";
+import { Typography } from "@material-tailwind/react";
+import AnimatedContainer from "../animations/AnimatedContainer";
 
 export default function TopDestenation() {
   return (
-    <section className="px-16 mt-marginGlobal">
-      <div className=" w-full xl:w-[50%] ">
-        <h2 className="text-3xl lg:text-6xl font-bold font-mainFont text-grayColor">
-          Top Destenation
-        </h2>
-        <p className="text-md w-[100%] xl:w-[75%] mt-4 pr-4 text-secondaryGray font-bold">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Officiis
-          laboriosam sed id, magni blanditiis
-        </p>
-      </div>
-      <div className="grid grid-cols-1 gap-12 lg:grid-cols-3 lg:gap-8 mt-marginSection">
-        {articlesData.map((article) => {
-          return (
-            <article
-              key={article?.id}
-              className="overflow-hidden rounded-lg shadow transition hover:shadow-lg"
-            >
-              <Image
-                src={article?.img}
-                alt="article1"
-                width={500}
-                height={100}
-              />
+    <section className="py-20 bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Section Header */}
+        <div className="text-center mb-16">
+          <FadeSlideUp delay={0.1}>
+            <Typography className="text-4xl lg:text-6xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-6">
+              Featured Articles
+            </Typography>
+          </FadeSlideUp>
+          <FadeSlideUp delay={0.2}>
+            <Typography className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed">
+              Discover our handpicked selection of the most engaging and
+              insightful articles from our community of expert writers.
+            </Typography>
+          </FadeSlideUp>
+        </div>
 
-              <div className="bg-white p-4 sm:p-6">
-                <time
-                  dateTime={article?.data}
-                  className="block text-xs text-gray-500"
-                >
-                  10th Oct 2022
-                </time>
-                <h3 className="mt-0.5 text-lg text-gray-900">
-                  {article?.title}
-                </h3>
-                <p className="mt-2 line-clamp-3 text-sm/relaxed text-gray-500 mb-8">
-                  {article?.desc}
-                </p>
-                <Link
-                  className="mt-8 rounded border border-indigo-600 px-12 py-3 text-sm font-medium text-indigo-600 hover:bg-indigo-600 hover:text-white focus:outline-none focus:ring active:bg-indigo-500"
-                  href="/pages/articles"
-                >
-                  Read More...
-                </Link>
-              </div>
-            </article>
-          );
-        })}
+        {/* Articles Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {articlesData.map((article, index) => {
+            return (
+              <AnimatedContainer key={article?.id} delay={index * 0.1}>
+                <FadeSlideUp>
+                  <article className="group modern-card overflow-hidden h-full flex flex-col">
+                    {/* Image Container */}
+                    <div className="relative overflow-hidden">
+                      <Image
+                        src={article?.img}
+                        alt={article?.title}
+                        width={500}
+                        height={300}
+                        className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-700"
+                      />
+                      {/* Overlay */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+
+                      {/* Category Badge */}
+                      <div className="absolute top-4 left-4">
+                        <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium">
+                          Technology
+                        </span>
+                      </div>
+
+                      {/* Reading Time */}
+                      <div className="absolute top-4 right-4">
+                        <span className="bg-white/90 text-gray-800 px-3 py-1 rounded-full text-sm font-medium">
+                          5 min read
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Content */}
+                    <div className="p-6 flex-1 flex flex-col">
+                      <time className="text-sm text-blue-600 dark:text-blue-400 font-medium mb-3">
+                        {article?.data || "Oct 10, 2024"}
+                      </time>
+
+                      <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2">
+                        {article?.title}
+                      </h3>
+
+                      <p className="text-gray-600 dark:text-gray-300 line-clamp-3 mb-6 flex-1">
+                        {article?.desc}
+                      </p>
+
+                      {/* Author & CTA */}
+                      <div className="flex items-center justify-between pt-4 border-t border-gray-100 dark:border-gray-700">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-8 h-8 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full flex items-center justify-center">
+                            <span className="text-white text-sm font-bold">
+                              A
+                            </span>
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium text-gray-900 dark:text-white">
+                              Author Name
+                            </p>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">
+                              Writer
+                            </p>
+                          </div>
+                        </div>
+
+                        <Link
+                          href="/pages/articles"
+                          className="inline-flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium group/link"
+                        >
+                          Read More
+                          <svg
+                            className="w-4 h-4 ml-1 group-hover/link:translate-x-1 transition-transform"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M17 8l4 4m0 0l-4 4m4-4H3"
+                            />
+                          </svg>
+                        </Link>
+                      </div>
+                    </div>
+                  </article>
+                </FadeSlideUp>
+              </AnimatedContainer>
+            );
+          })}
+        </div>
+
+        {/* View All Button */}
+        <FadeSlideUp delay={0.6}>
+          <div className="text-center mt-12">
+            <Link
+              href="/pages/articles"
+              className="btn-primary inline-flex items-center"
+            >
+              View All Articles
+              <svg
+                className="w-5 h-5 ml-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M17 8l4 4m0 0l-4 4m4-4H3"
+                />
+              </svg>
+            </Link>
+          </div>
+        </FadeSlideUp>
       </div>
     </section>
   );

@@ -6,7 +6,7 @@ import { checkAuth } from "../../utils/verify.js";
 import { uploadFile } from "../../utils/uploadFile.js";
 export const authResolvers = {
   Query: {
-    sendToken: async (_, {}, context) => {
+    SenTokn: async (_, {}, context) => {
       try {
         const user = checkAuth(context);
         return user;
@@ -20,12 +20,12 @@ export const authResolvers = {
       try {
         const file = await uploadFile(img);
         const hashedPass = await bcrypt.hash(password, 10);
-        const userEmail = await prisma.users.findUnique({
+        const userEmail = await prisma.user.findUnique({
           where: { email },
         });
         if (userEmail) throw new GraphQLError("User already exists!");
         try {
-          const user = await prisma.users.create({
+          const user = await prisma.user.create({
             data: { name, email, password: hashedPass, img: file },
           });
           return user;
@@ -46,7 +46,7 @@ export const authResolvers = {
         }
 
         const { email, password } = input;
-        const userEmail = await prisma.users.findUnique({
+        const userEmail = await prisma.user.findUnique({
           where: { email },
         });
         if (!userEmail) throw new GraphQLError("User not already exists!");
@@ -83,7 +83,7 @@ export const authResolvers = {
       const loggedInUser = checkAuth(context);
 
       try {
-        const user = await prisma.users.findMany({
+        const user = await prisma.user.findMany({
           where: {
             id: loggedInUser?.id,
           },

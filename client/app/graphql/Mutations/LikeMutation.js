@@ -8,7 +8,7 @@ const TOGGLE_COMMENT = gql`
 
 export const ToggleLike = () => {
   const [toggleLike, data, error, loading] = useMutation(TOGGLE_COMMENT, {
-    update(cashe, data) {
+    update(cache, data) {
       console.log(data);
     },
     refetchQueries: [{ query: GET_ALL_POSTS }],

@@ -1,7 +1,7 @@
 import { Checkbox } from "@material-tailwind/react";
 import React from "react";
 
-const Categoris = ({ categories, inputs, handleChange }) => {
+const Categories = ({ categories, inputs, handleChange }) => {
   return (
     <div className="px-4 mt-2 flex flex-col">
       <h2 className="font-bold text-2xl">Category</h2>
@@ -21,4 +21,4 @@ const Categoris = ({ categories, inputs, handleChange }) => {
   );
 };
 
-export default Categoris;
+export default Categories;

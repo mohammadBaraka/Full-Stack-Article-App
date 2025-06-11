@@ -1,33 +1,39 @@
 "use client";
 import { GtAllPosts } from "@/app/graphql/Queris/Post";
-import { UseSendToken } from "@/app/graphql/Queris/SenTokn";
+import { UseSenTokn } from "@/app/graphql/Queris/SenTokn";
 import Image from "next/image";
 import Link from "next/link";
 import { Loader } from "@/app/components/Loader/Loader";
 import CommetLikes from "@/app/components/CommetLikes";
+import StaggeredList, {
+  StaggeredItem,
+} from "@/app/components/animations/StaggeredList";
+import AnimatedContainer from "@/app/components/animations/AnimatedContainer";
+
 const Articles = () => {
   const { data, loading, error } = GtAllPosts();
-  const { data: user } = UseSendToken();
+  const { data: user } = UseSenTokn();
   const post = data?.getAllPosts;
-  console.log("🚀 ~ Articles ~ post:", post);
 
   return (
     <>
       {loading ? <Loader /> : null}
-      <div className="w-[90%] mx-auto mt-marginGlobal flex flex-col justify-center ">
-        <div
-          className=" 
+      <AnimatedContainer className="w-[90%] mx-auto mt-marginGlobal flex flex-col justify-center">
+        <StaggeredList>
+          <StaggeredItem
+            className=" 
     grid gap-12 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 lg:gap-6 "
-        >
-          {post?.map((article) => {
-            const ownerPost = article?.Users?.id === user?.sendToken?.id;
-
-            return (
-              <>
-                <div className="relative flex flex-col justify-between h-full">
-                  <article
-                    key={article?.id}
-                    className="mb-6  rounded-lg border border-gray-100 bg-white shadow-sm "
+          >
+            {post?.map((article, index) => {
+              const ownerPost = article?.User?.id === user?.SenTokn?.id;
+              return (
+                <StaggeredItem
+                  key={article?.id}
+                  className="relative flex flex-col justify-between h-full"
+                >
+                  <AnimatedContainer
+                    className="mb-6 rounded-lg border border-gray-100 bg-white shadow-sm"
+                    delay={index * 0.1}
                   >
                     {ownerPost && (
                       <div className="absolute -top-8 -left-5">
@@ -81,13 +87,13 @@ const Articles = () => {
                     </div>
 
                     <CommetLikes article={article} user={user} />
-                  </article>
-                </div>
-              </>
-            );
-          })}
-        </div>
-      </div>
+                  </AnimatedContainer>
+                </StaggeredItem>
+              );
+            })}
+          </StaggeredItem>
+        </StaggeredList>
+      </AnimatedContainer>
     </>
   );
 };

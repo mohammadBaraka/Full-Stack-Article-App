@@ -19,9 +19,9 @@ export const commentResolvers = {
     createComment: async (_, { input }, context) => {
       try {
         let { title, postsId } = input;
-        const userId = checkAuth(context);
+        const usersId = checkAuth(context);
         await prisma.comments.create({
-          data: { title, postsId, usersId: userId?.id },
+          data: { title, postsId, usersId: usersId?.id },
         });
         return "Comment created successfully";
       } catch (error) {
@@ -31,12 +31,12 @@ export const commentResolvers = {
     updateComment: async (_, { input }, context) => {
       const { id, title, postsId } = input;
       try {
-        const userId = checkAuth(context);
+        const usersId = checkAuth(context);
         await prisma.comments.update({
           where: {
             id,
           },
-          data: { title, usersId: userId?.id, postsId },
+          data: { title, usersId: usersId?.id, postsId },
         });
         return "Comment updated successfully";
       } catch (error) {
