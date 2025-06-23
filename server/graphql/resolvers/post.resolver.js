@@ -117,7 +117,11 @@ export const postReaolvers = {
 
           include: {
             User: true,
-            comments: true,
+            comments: {
+              include: {
+                user: true,
+              },
+            },
             likes: true,
           },
           orderBy: { createdAt: "desc" },

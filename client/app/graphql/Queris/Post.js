@@ -43,8 +43,21 @@ const GET_POST_BY_Category = gql`
       title
       desc
       img
+      User {
+        id
+        name
+        img
+      }
       comments {
         id
+        title
+        usersId
+        postsId
+        user {
+          id
+          name
+          img
+        }
       }
       likes {
         id
@@ -61,11 +74,20 @@ const GET_POSTS_BY_USERS_ID = gql`
         name
         img
         posts {
+          id
           title
           img
           desc
           comments {
+            id
             title
+            usersId
+            postsId
+            user {
+              id
+              name
+              img
+            }
           }
           likes {
             id

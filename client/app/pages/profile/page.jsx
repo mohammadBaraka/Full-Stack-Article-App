@@ -34,7 +34,7 @@ const Profile = () => {
                 <div className="flex-shrink-0">
                   <div className="relative">
                     <Image
-                      src={profileUser?.avatar || "/avatar-user.png"}
+                      src={profileUser?.img || "/avatar-user.png"}
                       alt={profileUser?.name || "User Avatar"}
                       width={120}
                       height={120}

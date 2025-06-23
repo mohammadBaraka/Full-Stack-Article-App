@@ -39,8 +39,8 @@ export function Header() {
   return (
     <>
       {loading && <Loader />}
-      <Navbar className="max-w-full px-4 py-2 bg-primary border-b border-primary shadow-sm dark:shadow-articleGray-900/20">
-        <div className="flex items-center justify-between text-primary">
+      <Navbar className="max-w-full px-4 py-2 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 shadow-sm dark:shadow-gray-900/20">
+        <div className="flex items-center justify-between text-gray-900 dark:text-white">
           <Typography
             as="a"
             href="#"
@@ -80,8 +80,7 @@ export function Header() {
                   <Button
                     variant="text"
                     size="sm"
-                    color="blue-gray"
-                    className="text-primary"
+                    className="text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800"
                   >
                     Log In
                   </Button>
@@ -90,7 +89,7 @@ export function Header() {
                   <Button
                     variant="gradient"
                     size="sm"
-                    className="bg-articleBlue-500 hover:bg-articleBlue-600"
+                    className="bg-articleBlue-500 hover:bg-articleBlue-600 text-white"
                   >
                     Sign In
                   </Button>

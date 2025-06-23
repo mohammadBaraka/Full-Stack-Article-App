@@ -76,7 +76,6 @@ export const LoginMutation = (inputs) => {
 export const LogoutMutation = () => {
   const [logout, { data, error, loading }] = useMutation(LOGOUT_MUTATION, {
     refetchQueries: [{ query: GET_ALL_USERS }],
-
     update(cache, data) {
       console.log("🚀 ~ update ~ Logout:", data);
     },

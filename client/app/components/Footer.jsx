@@ -21,47 +21,18 @@ const currentYear = new Date().getFullYear();
 
 export default function Footer() {
   return (
-    <footer className="relative w-full mt-10 bg-primary text-primary border-t border-primary pt-8">
+    <footer className="relative w-full mt-10 bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-t border-gray-200 dark:border-gray-800 pt-8">
       <div className="mx-auto w-full max-w-7xl px-8">
         <div className="grid grid-cols-1 justify-between gap-4 md:grid-cols-2">
-          <Typography variant="h5" className="mb-6 text-primary">
+          <Typography variant="h5" className="mb-6 text-gray-900 dark:text-white">
             Article App
           </Typography>
-          <div className="grid grid-cols-3 justify-between gap-4">
-            {LINKS.map(({ title, items }) => (
-              <ul key={title}>
-                <Typography
-                  variant="small"
-                  color="blue-gray"
-                  className="mb-3 font-medium text-accent"
-                >
-                  {title}
-                </Typography>
-                {items.map((link) => (
-                  <li key={link}>
-                    <Typography
-                      as="a"
-                      href="#"
-                      color="gray"
-                      className="py-1.5 font-normal transition-colors hover:text-accent text-secondary"
-                    >
-                      {link}
-                    </Typography>
-                  </li>
-                ))}
-              </ul>
-            ))}
-          </div>
         </div>
-        <div className="mt-12 flex w-full flex-col items-center justify-center border-t border-primary py-4 md:flex-row md:justify-between">
-          <Typography
-            variant="small"
-            className="mb-4 text-center font-normal text-secondary md:mb-0"
-          >
-            &copy; {currentYear} <a href="#">Article App</a>. All Rights
-            Reserved.
+        <div className="mt-12 flex w-full flex-col items-center justify-center border-t border-gray-200 dark:border-gray-800 py-4 md:flex-row md:justify-between">
+          <Typography className="text-xl lg:text-lg font-bold text-gray-900 dark:text-white mb-6">
+            reserved
           </Typography>
-          <div className="flex gap-4 text-secondary sm:justify-center">
+          <div className="flex gap-4 text-gray-600 dark:text-gray-300">
             <Typography
               as="a"
               href="#"

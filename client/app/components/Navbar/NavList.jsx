@@ -39,7 +39,7 @@ export function NavList() {
           <Link href="/pages/write">
             <ListItem
               className="flex items-center  w-12 h-12 justify-center rounded-full bg-articleBlue-300 font-bold
-            hover:bg-articleBlue-400 hover:text-white text-white text-sm"
+            hover:bg-articleBlue-400 hover:text-white dark:text-white text-gray-900 text-sm"
             >
               Write
             </ListItem>

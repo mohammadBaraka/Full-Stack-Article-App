@@ -17,7 +17,7 @@ const Articles = () => {
 
   return (
     <>
-      {loading ? <Loader /> : null}
+      {loading && <Loader />}
       <AnimatedContainer className="w-[90%] mx-auto mt-marginGlobal flex flex-col justify-center">
         <StaggeredList>
           <StaggeredItem
@@ -25,6 +25,7 @@ const Articles = () => {
     grid gap-12 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 lg:gap-6 "
           >
             {post?.map((article, index) => {
+              console.log("🚀 ~ {post?.map ~ article:", article);
               const ownerPost = article?.User?.id === user?.SenTokn?.id;
               return (
                 <StaggeredItem

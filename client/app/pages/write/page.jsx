@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState, Suspense } from "react";
+import React, { useEffect, useState, Suspense, useMemo } from "react";
 import dynamic from "next/dynamic";
 import "react-quill-new/dist/quill.snow.css";
 import { Input } from "@material-tailwind/react";
@@ -8,20 +8,19 @@ import {
   UpdatePostMutation,
 } from "@/app/graphql/Mutations/PostMutation";
 import { UseSenTokn } from "@/app/graphql/Queris/SenTokn";
-import { msg, msgError, msgSuccess } from "@/app/utils/msg";
+import { msgError, msgSuccess } from "@/app/utils/msg";
 import { GetPost } from "@/app/graphql/Queris/Post";
 import Categories from "@/app/components/WriteComponents/Categoris";
 import { Loader } from "@/app/components/Loader/Loader";
-import { useParams, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { GetAllCategories } from "@/app/graphql/Queris/Ctegory";
 import Publish from "@/app/components/WriteComponents/Bublish";
 const QuillEditor = dynamic(() => import("react-quill-new"), { ssr: false });
 
 export default function Home() {
-  const param = useParams();
   const postId = useSearchParams().get("post");
   const [isClient, setIsClient] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const router = useRouter();
 
   const { data: postData, loading: loadingPost } = GetPost(postId);
   const { data: token } = UseSenTokn();
@@ -50,24 +49,48 @@ export default function Home() {
     setIsClient(true);
   }, []);
 
-  // Update inputs when data is loaded (client-side only)
+  // Memoize categoriesIds to prevent unnecessary re-renders
+  const memoizedCategoriesIds = useMemo(() => {
+    return postData?.getOnePost?.categories?.map((cat) => cat?.id) || [];
+  }, [postData?.getOnePost?.categories]);
+
   useEffect(() => {
-    if (isClient && postData?.getOnePost) {
-      setInputs({
+    if (isClient && postData?.getOnePost && usersId) {
+      const newInputs = {
         title: postData.getOnePost.title || "",
         desc: postData.getOnePost.desc || "",
         usersId: usersId,
         img: postData.getOnePost.img || null,
         categoryId: categoriesIds || [],
+      };
+
+      // Only update if the values are actually different
+      setInputs((prevInputs) => {
+        const hasChanged =
+          prevInputs.title !== newInputs.title ||
+          prevInputs.desc !== newInputs.desc ||
+          prevInputs.usersId !== newInputs.usersId ||
+          prevInputs.img !== newInputs.img ||
+          JSON.stringify(prevInputs.categoryId) !==
+            JSON.stringify(newInputs.categoryId);
+
+        return hasChanged ? newInputs : prevInputs;
       });
     }
-  }, [isClient, postData, usersId, categoriesIds]);
+  }, [
+    isClient,
+    postData?.getOnePost?.title,
+    postData?.getOnePost?.desc,
+    postData?.getOnePost?.img,
+    usersId,
+    JSON.stringify(categoriesIds),
+  ]);
 
   useEffect(() => {
-    if (isClient && postId && postData?.getOnePost?.img) {
+    if (isClient && postId && postData?.getOnePost?.img && !imagePreview) {
       setImagePreview(postData.getOnePost.img);
     }
-  }, [isClient, postId, postData]);
+  }, [isClient, postId, postData?.getOnePost?.img, imagePreview]);
 
   const {
     createPost,
@@ -76,69 +99,77 @@ export default function Home() {
     error: errorCreate,
   } = CreatePostMutation(inputs);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    postId
-      ? updatePost({
-          variables: {
-            id: postId,
-            title: inputs.title,
-            desc: inputs.desc,
-            img: inputs.img,
-            usersId,
-            categoryId: inputs.categoryId,
-          },
-        })
-          .then((res) => {
-            msgSuccess("Post Updated Successfully");
-            setInputs({
-              title: "",
-              desc: "",
-              img: null,
-              categoryId: [],
-            });
-          })
-          .catch((err) => {
-            msgError(err?.message);
-          })
-      : createPost()
-          .then(() => {
-            msgSuccess("Post Created Successfully");
-            setInputs({
-              title: "",
-              desc: "",
-              img: null,
-              categoryId: [],
-            });
-            setImagePreview(null);
-          })
-          .catch((err) => {
-            msgError(err?.message);
-          });
-  };
-
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;
 
     if (type === "file") {
-      setInputs((prevState) => ({
-        ...prevState,
-        [name]: files[0],
-      }));
-
-      setImagePreview(URL.createObjectURL(files[0]));
-    } else if (type === "checkbox") {
-      setInputs((prevState) => ({
-        ...prevState,
-        categoryId: prevState.categoryId.includes(name)
-          ? prevState.categoryId.filter((id) => id !== name)
-          : [...prevState.categoryId, name],
-      }));
+      const file = files[0];
+      if (file) {
+        setInputs((prevState) => ({
+          ...prevState,
+          [name]: file,
+        }));
+        setImagePreview(URL.createObjectURL(file));
+      }
     } else {
       setInputs((prevState) => ({
         ...prevState,
         [name]: value,
       }));
+    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const variables = {
+      title: inputs.title,
+      desc: inputs.desc,
+      usersId,
+      categoryId: inputs.categoryId,
+    };
+
+    if (inputs.img instanceof File) {
+      variables.img = inputs.img;
+    }
+
+    if (postId) {
+      variables.id = postId;
+      updatePost({
+        variables,
+      })
+        .then((res) => {
+          msgSuccess("Post Updated Successfully");
+          setInputs({
+            title: "",
+            desc: "",
+            img: null,
+            categoryId: [],
+          });
+          setImagePreview(null);
+          router.push("/pages/articles");
+        })
+        .catch((err) => {
+          msgError(err?.message);
+        });
+    } else {
+      createPost({
+        variables,
+      })
+        .then(() => {
+          msgSuccess("Post Created Successfully");
+          setInputs({
+            title: "",
+            desc: "",
+            img: null,
+            categoryId: [],
+          });
+          setImagePreview(null);
+          router.push("/pages/articles");
+        })
+        .catch((err) => {
+          msgError(err?.message);
+        });
     }
   };
 

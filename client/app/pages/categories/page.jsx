@@ -15,6 +15,7 @@ const Categories = () => {
   const catName = useSearchParams().get("name");
   const { data, loading } = GetPostByCategory(catId);
   const categoriesData = data?.getPostByCategory;
+
   const { data: user, loading: LoadingUser } = UseSenTokn();
   return (
     <Suspense>
@@ -30,6 +31,7 @@ const Categories = () => {
     grid gap-12 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 lg:gap-6 "
           >
             {categoriesData?.map((article, index) => {
+              console.log("🚀 ~ {categoriesData?.map ~ article:", article);
               const ownerPost = article?.User?.id === user?.SenTokn?.id;
 
               return (
